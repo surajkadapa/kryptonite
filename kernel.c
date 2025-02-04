@@ -1,4 +1,5 @@
 #include "kernel.h"
+#include "common.h"
 typedef unsigned char uint8_t;
 typedef unsigned int uint32_t;
 typedef uint32_t size_t;
@@ -41,6 +42,9 @@ void kernel_main(void){
 	for(int i=0; s[i] != '\0'; i++){
 		putchar(s[i]);
 	}
+
+  printf("\nNEW Hello World %s \n", "YOLOOOO");
+  printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
 
 	for(;;){
 		__asm__ __volatile__("wfi");
