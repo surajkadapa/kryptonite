@@ -6,15 +6,15 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 typedef uint32_t size_t;
-typedef uint32_t paddr_t;
-typedef uint32_t vaddr_t;
+typedef uint32_t paddr_t; //to represent physical memory address
+typedef uint32_t vaddr_t; //to represent virtual memory address
 
 #define true 1
 #define false 0
 #define NULL ((void *) 0)
-#define align_up(value, align) __builtin_align_up(value, align)
-#define is_aligned(value, align) __builtin_is_aligned(value, align)
-#define offsetof(type, member) __builtin_offsetof(type, memeber)
+#define align_up(value, align) __builtin_align_up(value, align) //rounds up to the nearest multiple of align, align must be a power of 2
+#define is_aligned(value, align) __builtin_is_aligned(value, align) //checks if value is a multiple of align, align must be a power of 2
+#define offsetof(type, member) __builtin_offsetof(type, memeber) //returns the offset of a member within a structure
 #define va_list __builtin_va_list
 #define va_start __builtin_va_start
 #define va_end __builtin_va_end
