@@ -47,7 +47,7 @@ void kernel_main(void){
   printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
 
 	for(;;){
-		__asm__ __volatile__("wfi");
+		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
 	}
 }
 

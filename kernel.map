@@ -1,7 +1,7 @@
      VMA      LMA     Size Align Out     In      Symbol
        0        0 80200000     1 . = 0x80200000
 80200000 80200000      264     2 .text
-80200000 80200000        e     2         /tmp/kernel-4ae90f.o:(.text.boot)
+80200000 80200000        e     2         /tmp/kernel-b7016b.o:(.text.boot)
 80200000 80200000        0     1                 
 80200000 80200000        0     1                 
 80200000 80200000        0     1                 $x.1
@@ -9,7 +9,7 @@
 80200000 80200000        e     1                 boot
 8020000e 8020000e        0     1                 
 8020000e 8020000e        0     1                 
-8020000e 8020000e       b4     2         /tmp/kernel-4ae90f.o:(.text)
+8020000e 8020000e       b4     2         /tmp/kernel-b7016b.o:(.text)
 8020000e 8020000e        0     1                 
 8020000e 8020000e        0     1                 
 8020000e 8020000e        0     1                 $x.0
@@ -76,7 +76,7 @@
 802000c0 802000c0        0     1                 
 802000c2 802000c2        0     1                 
 802000c2 802000c2        0     1                 
-802000c2 802000c2      1a2     2         /tmp/common-ad90a6.o:(.text)
+802000c2 802000c2      1a2     2         /tmp/common-edde0a.o:(.text)
 802000c2 802000c2        0     1                 
 802000c2 802000c2        0     1                 
 802000c2 802000c2        0     1                 $x.0
@@ -220,7 +220,7 @@
 802002b4 802002b4    20000     1 . += 128 * 1024
 802202b4 802202b4        0     1 __stack_top = .
        0        0      302     1 .debug_loc
-       0        0      168     1         /tmp/kernel-4ae90f.o:(.debug_loc)
+       0        0      168     1         /tmp/kernel-b7016b.o:(.debug_loc)
        0        0        0     1                 
        0        0        0     1                 $d.3
       1b       1b        0     1                 
@@ -233,7 +233,7 @@
      113      113        0     1                 
      130      130        0     1                 
      14b      14b        0     1                 
-     168      168      19a     1         /tmp/common-ad90a6.o:(.debug_loc)
+     168      168      19a     1         /tmp/common-edde0a.o:(.debug_loc)
      168      168        0     1                 
      168      168        0     1                 $d.2
      186      186        0     1                 
@@ -243,20 +243,20 @@
      294      294        0     1                 
      2d7      2d7        0     1                 
        0        0      26f     1 .debug_abbrev
-       0        0      182     1         /tmp/kernel-4ae90f.o:(.debug_abbrev)
+       0        0      182     1         /tmp/kernel-b7016b.o:(.debug_abbrev)
        0        0        0     1                 $d.4
-     182      182       ed     1         /tmp/common-ad90a6.o:(.debug_abbrev)
+     182      182       ed     1         /tmp/common-edde0a.o:(.debug_abbrev)
      182      182        0     1                 $d.3
        0        0      61b     1 .debug_info
-       0        0      46d     1         /tmp/kernel-4ae90f.o:(.debug_info)
+       0        0      46d     1         /tmp/kernel-b7016b.o:(.debug_info)
        0        0        0     1                 $d.5
-     46d      46d      1ae     1         /tmp/common-ad90a6.o:(.debug_info)
+     46d      46d      1ae     1         /tmp/common-edde0a.o:(.debug_info)
      46d      46d        0     1                 $d.4
        0        0       30     1 .debug_ranges
-       0        0       18     1         /tmp/kernel-4ae90f.o:(.debug_ranges)
+       0        0       18     1         /tmp/kernel-b7016b.o:(.debug_ranges)
        0        0        0     1                 
        0        0        0     1                 $d.6
-      18       18       18     1         /tmp/common-ad90a6.o:(.debug_ranges)
+      18       18       18     1         /tmp/common-edde0a.o:(.debug_ranges)
       18       18        0     1                 
       18       18        0     1                 $d.5
        0        0      170     1 .debug_str
@@ -266,17 +266,17 @@
        0        0       2b     1 .riscv.attributes
        0        0       2b     1         <internal>:(.riscv.attributes)
        0        0       b0     4 .debug_frame
-       0        0       6c     4         /tmp/kernel-4ae90f.o:(.debug_frame)
+       0        0       6c     4         /tmp/kernel-b7016b.o:(.debug_frame)
        0        0        0     1                 
        0        0        0     1                 $d.10
-      6c       6c       44     4         /tmp/common-ad90a6.o:(.debug_frame)
+      6c       6c       44     4         /tmp/common-edde0a.o:(.debug_frame)
       6c       6c        0     1                 
       6c       6c        0     1                 $d.9
        0        0      389     1 .debug_line
-       0        0      12b     1         /tmp/kernel-4ae90f.o:(.debug_line)
+       0        0      12b     1         /tmp/kernel-b7016b.o:(.debug_line)
        0        0        0     1                 .Lline_table_start0
        0        0        0     1                 $d.11
-     12b      12b      25e     1         /tmp/common-ad90a6.o:(.debug_line)
+     12b      12b      25e     1         /tmp/common-edde0a.o:(.debug_line)
      12b      12b        0     1                 .Lline_table_start0
      12b      12b        0     1                 $d.10
        0        0     1290     4 .symtab
