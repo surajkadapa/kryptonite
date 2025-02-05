@@ -77,7 +77,7 @@ char *strcpy(char *dst, const char *src){
   return dst;
 }
 
-char *strcpy_s(char *dst, const char *src, size_t n){
+char *strcpy_s(char *dst, const char *src, size_t n){ //ensure that the string does not continue copying to dst if dest is smaller than src
   char *d = dst;
   while(n > 1 && *src){
     *dst++ = *src++;
