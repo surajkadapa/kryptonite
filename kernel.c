@@ -51,7 +51,7 @@ __attribute__((aligned(4)))
 void kernel_entry(void){
   __asm__ __volatile__(
     "csrw sscratch, sp\n"
-    "addi sp, sp - 4 * 31\n"
+    "addi sp, sp, - 4 * 31\n"
     "sw ra, 4 * 0(sp)\n"
     "sw gp, 4 * 1(sp)\n"
     "sw tp, 4 * 2(sp)\n"
@@ -122,6 +122,14 @@ void kernel_entry(void){
     "lw sp, 4 * 30(sp)\n"
     "sret\n"
   );
+}
+
+void handle_trap(struct trap_frame *f){
+  uint32_t scause = READ_CSR(scause);
+  uint32_t stval = READ_CSR(stval);
+  uint32_t user_pc = READ_CSR(sepc);
+
+  PANIC("Unexpected Trap scause = %x, stval=%x, spec=%x\n", scause, stval, user_pc);
 }
 
 __attribute__((section(".text.boot"))) //need this so the function is placed at the memory address where openSBI will look 
