@@ -28,24 +28,6 @@ void putchar(char ch){
 	sbi_call(ch, 0, 0, 0, 0, 0, 0, 1);	
 }
 
-
-void kernel_main(void){
-	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
-  PANIC("BOOTINGG!!");
-
-	const char *s = "\n\nHello World!\n";
-	for(int i=0; s[i] != '\0'; i++){
-		putchar(s[i]);
-	}
-
-  printf("\nNEW Hello World %s \n", "YOLOOOO");
-  printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
-
-	for(;;){
-		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
-	}
-}
-
 __attribute__((naked))
 __attribute__((aligned(4)))
 void kernel_entry(void){
@@ -123,6 +105,26 @@ void kernel_entry(void){
     "sret\n"
   );
 }
+
+
+void kernel_main(void){
+	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
+	WRITE_CSR(stvec, (uint32_t) kernel_entry);
+	__asm__ __volatile__("unimp"); //instruction that triggers an illegal instruction exception
+	
+	const char *s = "\n\nHello World!\n";
+	for(int i=0; s[i] != '\0'; i++){
+		putchar(s[i]);
+	}
+
+  printf("\nNEW Hello World %s \n", "YOLOOOO");
+  printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
+
+	for(;;){
+		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
+	}
+}
+
 
 void handle_trap(struct trap_frame *f){
   uint32_t scause = READ_CSR(scause);
