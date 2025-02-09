@@ -130,6 +130,47 @@ void handle_trap(struct trap_frame *f){
   PANIC("Unexpected Trap scause = %x, stval=%x, spec=%x\n", scause, stval, user_pc);
 }
 
+__attribute__((naked)) void context_switch(uint32_t *prev_sp, uint32_t *next_sp){
+	__asm__ __volatile__(
+		//save the callee registers onto the current process's stack
+		"addi sp, sp, -13 * 4\n" //allocating space for 13 4-byte registers
+		"sw ra, 4 * 0(sp)\n"
+		"sw s0, 4 * 1(sp)\n"
+		"sw s1, 4 * 2(sp)\n"
+		"sw s2, 4 * 3(sp)\n"
+		"sw s3, 4 * 4(sp)\n"
+		"sw s4, 4 * 5(sp)\n"
+		"sw s5, 4 * 6(sp)\n"
+		"sw s6, 4 * 7(sp)\n"
+		"sw s7, 4 * 8(sp)\n"
+		"sw s8, 4 * 9(sp)\n"
+		"sw s9, 4 * 10(sp)\n"
+		"sw s10, 4 * 11(sp)\n"
+		"sw s11, 4 * 12(sp)\n"
+
+		//switch the stack pointer
+		"sw sp, (a0)\n" //*prev_sp = sp
+		"lw sp, (a1)\n" //switching the stack pointer here
+			
+		//restore callee-saved registers
+		"lw ra, 4 * 0(sp)\n"
+		"lw s0, 4 * 1(sp)\n"
+		"lw s1, 4 * 2(sp)\n"
+		"lw s2, 4 * 3(sp)\n"
+		"lw s3, 4 * 4(sp)\n"
+		"lw s4, 4 * 5(sp)\n"
+		"lw s5, 4 * 6(sp)\n"
+		"lw s6, 4 * 7(sp)\n"
+		"lw s7, 4 * 8(sp)\n"
+		"lw s8, 4 * 9(sp)\n"
+		"lw s9, 4 * 10(sp)\n"
+		"lw s10, 4 * 11(sp)\n"
+		"lw s11, 4 * 12(sp)\n"
+		"addi sp, sp, 13 * 4\n"
+		"ret\n"
+	);
+}
+
 void kernel_main(void){
 	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
 	//WRITE_CSR(stvec, (uint32_t) kernel_entry);

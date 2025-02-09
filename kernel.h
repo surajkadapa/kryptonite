@@ -60,4 +60,19 @@ struct trap_frame {
 	__asm__ __volatile__("csrw " #reg ", %0" :: "r"(__temp)); \
 	}while(0)
 
+//macros and struct needed for processes
+#define PROCS_MAX 8 //maximum number of proceses
+#define PROC_UNUSED 0
+#define PROC_RUNNABLE 1 
+
+//proccess control block(pcb)
+struct process {
+	int pid; //process id
+	int state; //process state: PROC_UNUSED or PROC_RUNNABLE
+	vaddr_t sp; //stack pointer
+	uint8_t stack[8192]; //kernel stack
+	//contains saved CPU regs, return addresses and local vars, can be used for context switching
+};
+
+
 
