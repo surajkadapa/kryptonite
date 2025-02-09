@@ -107,22 +107,18 @@ void kernel_entry(void){
 }
 
 
-void kernel_main(void){
-	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
-	WRITE_CSR(stvec, (uint32_t) kernel_entry);
-	__asm__ __volatile__("unimp"); //instruction that triggers an illegal instruction exception
-	
-	const char *s = "\n\nHello World!\n";
-	for(int i=0; s[i] != '\0'; i++){
-		putchar(s[i]);
-	}
 
-  printf("\nNEW Hello World %s \n", "YOLOOOO");
-  printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
+extern char __free_ram[], __free_ram_end[];
 
-	for(;;){
-		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
-	}
+paddr_t alloc_pages(uint32_t n){
+	static paddr_t next_paddr = (paddr_t) __free_ram;  //value of next_paddr is retained across functions, behaving like a global variable
+	paddr_t paddr = next_paddr;
+	next_paddr += n * PAGE_SIZE;
+
+	if(next_paddr > (paddr_t) __free_ram_end)
+		PANIC("OUT OF MEMORY");
+	memset((void *) paddr, 0, n*PAGE_SIZE);
+	return paddr;
 }
 
 
@@ -132,6 +128,33 @@ void handle_trap(struct trap_frame *f){
   uint32_t user_pc = READ_CSR(sepc);
 
   PANIC("Unexpected Trap scause = %x, stval=%x, spec=%x\n", scause, stval, user_pc);
+}
+
+void kernel_main(void){
+	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
+	//WRITE_CSR(stvec, (uint32_t) kernel_entry);
+	//__asm__ __volatile__("unimp"); //instruction that triggers an illegal instruction exception
+	
+	paddr_t paddr0 = alloc_pages(2);
+	paddr_t paddr1 = alloc_pages(1);
+	printf("[test]alloc_pages: paddr0=%x\n", paddr0);
+	printf("[test]alloc_pages: paddr1=%x\n", paddr1);
+
+
+
+	//const char *s = "\n\nHello World!\n";
+	//for(int i=0; s[i] != '\0'; i++){
+	//	putchar(s[i]);
+	//}
+	//
+	PANIC("BOOTED");
+
+  printf("\nNEW Hello World %s \n", "YOLOOOO");
+  printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
+
+	for(;;){
+		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
+	}
 }
 
 __attribute__((section(".text.boot"))) //need this so the function is placed at the memory address where openSBI will look 
