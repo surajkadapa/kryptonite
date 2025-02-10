@@ -25,7 +25,7 @@ struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4, lo
 }
 
 void putchar(char ch){
-	sbi_call(ch, 0, 0, 0, 0, 0, 0, 1);	
+	sbi_call(ch, 0, 0, 0, 0, 0, 0, 1);
 }
 
 __attribute__((naked))
@@ -64,7 +64,7 @@ void kernel_entry(void){
     "sw s9, 4 * 27(sp)\n"
     "sw s10, 4 * 28(sp)\n"
     "sw s11, 4 * 29(sp)\n"
-  
+
     "csrr a0, sscratch\n"
     "sw a0, 4 * 30(sp)\n"
 
@@ -151,7 +151,7 @@ __attribute__((naked)) void context_switch(uint32_t *prev_sp, uint32_t *next_sp)
 		//switch the stack pointer
 		"sw sp, (a0)\n" //*prev_sp = sp
 		"lw sp, (a1)\n" //switching the stack pointer here
-			
+
 		//restore callee-saved registers
 		"lw ra, 4 * 0(sp)\n"
 		"lw s0, 4 * 1(sp)\n"
@@ -171,11 +171,76 @@ __attribute__((naked)) void context_switch(uint32_t *prev_sp, uint32_t *next_sp)
 	);
 }
 
+struct process procs[PROCS_MAX];
+
+struct process *create_process(uint32_t pc){
+  struct process *proc=NULL;
+  int i;
+  for(i = 0; i < PROCS_MAX; i++){ //finding an unused process control block
+    if(procs[i].state == PROC_UNUSED){
+      proc = &procs[i];
+      break;
+    }
+  }
+
+  if(!proc)
+    PANIC("[ERROR]NO FREE PROCESS CONTROL BLOCKS!");
+
+  uint32_t *sp = (uint32_t *) &proc->stack[sizeof(proc->stack)];
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = 0;
+  *--sp = (uint32_t) pc;
+
+  //init fields
+  proc->pid = i + 1;
+  proc->state = PROC_RUNNABLE;
+  proc->sp = (uint32_t) sp;
+  return proc;
+}
+
+void delay(void){
+  for(int i = 0; i < 30000000; i++)
+    __asm__ __volatile__("nop");
+}
+
+struct process *proc_a;
+struct process *proc_b;
+
+void proc_a_entry(void){
+  printf("[SYSTEM PROC A] STARTING process A\n");
+  while(1){
+    putchar('A');
+    context_switch(&proc_a->sp, &proc_b->sp);
+    delay();
+  }
+}
+
+void proc_b_entry(void){
+  printf("[SYSTEM PROC B] STARTING process b\n");
+  while(1){
+    putchar('B');
+    context_switch(&proc_b->sp, &proc_a->sp);
+    delay();
+  }
+}
+
+
 void kernel_main(void){
 	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
-	//WRITE_CSR(stvec, (uint32_t) kernel_entry);
+	WRITE_CSR(stvec, (uint32_t) kernel_entry);
 	//__asm__ __volatile__("unimp"); //instruction that triggers an illegal instruction exception
-	
+
 	paddr_t paddr0 = alloc_pages(2);
 	paddr_t paddr1 = alloc_pages(1);
 	printf("[test]alloc_pages: paddr0=%x\n", paddr0);
@@ -188,17 +253,22 @@ void kernel_main(void){
 	//	putchar(s[i]);
 	//}
 	//
-	PANIC("BOOTED");
+	//PANIC("BOOTED");
 
-  printf("\nNEW Hello World %s \n", "YOLOOOO");
-  printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
+  printf("\nBOOTED\n");
+  // printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
+  proc_a = create_process((uint32_t) proc_a_entry);
+  proc_b = create_process((uint32_t) proc_b_entry);
+  proc_a_entry();
+
+  PANIC("[SYSTEM] DONE\n");
 
 	for(;;){
 		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
 	}
 }
 
-__attribute__((section(".text.boot"))) //need this so the function is placed at the memory address where openSBI will look 
+__attribute__((section(".text.boot"))) //need this so the function is placed at the memory address where openSBI will look
 __attribute__((naked)) //to tell the compiler to not generate any code before or after the function, ensuring the inline assembly code is the same as the function body
 void boot(void){
 	__asm__ __volatile__(
