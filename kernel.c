@@ -32,7 +32,9 @@ __attribute__((naked))
 __attribute__((aligned(4)))
 void kernel_entry(void){
   __asm__ __volatile__(
-    "csrw sscratch, sp\n"
+    //retrive the kernel stack of the current running process from the stack
+    "csrrw sp, sscratch, sp\n"
+
     "addi sp, sp, - 4 * 31\n"
     "sw ra, 4 * 0(sp)\n"
     "sw gp, 4 * 1(sp)\n"
@@ -67,6 +69,10 @@ void kernel_entry(void){
 
     "csrr a0, sscratch\n"
     "sw a0, 4 * 30(sp)\n"
+
+    //reset the kernel stack
+    "addi a0, sp, 4 * 31\n"
+    "csrw sscratch, a0\n"
 
     "mv a0, sp\n"
     "call handle_trap\n"
@@ -214,6 +220,36 @@ void delay(void){
     __asm__ __volatile__("nop");
 }
 
+struct process *current_proc;
+struct process *idle_proc; //used when there are no other process to run
+
+//process giving up control voluntarily
+void yield(void){
+  //search for a runnable process
+  struct process *next = idle_proc;
+  for(int i = 0; i < PROCS_MAX; i++){
+    struct process *proc = &procs[(current_proc->pid + i) % PROCS_MAX]; //find the next runnable process using round robin
+    if(proc->state == PROC_RUNNABLE && proc->pid > 0){
+      next = proc;
+      break;
+    }
+  }
+
+  if (next == current_proc)
+    return;
+
+  __asm__ __volatile__(
+    "csrw sscratch, %[sscratch]\n"
+    :
+    : [sscratch] "r" ((uint32_t) &next->stack[sizeof(next->stack)])
+  );
+
+  //context switching
+  struct process *prev = current_proc;
+  current_proc = next;
+  context_switch(&prev->sp, &next->sp);
+}
+
 struct process *proc_a;
 struct process *proc_b;
 
@@ -221,7 +257,7 @@ void proc_a_entry(void){
   printf("[SYSTEM PROC A] STARTING process A\n");
   while(1){
     putchar('A');
-    context_switch(&proc_a->sp, &proc_b->sp);
+    yield();
     delay();
   }
 }
@@ -230,7 +266,7 @@ void proc_b_entry(void){
   printf("[SYSTEM PROC B] STARTING process b\n");
   while(1){
     putchar('B');
-    context_switch(&proc_b->sp, &proc_a->sp);
+    yield();
     delay();
   }
 }
@@ -257,11 +293,16 @@ void kernel_main(void){
 
   printf("\nBOOTED\n");
   // printf("1 + 3 = %d, %x\n", 1+3, 0x1234abcd);
+  //
+  idle_proc = create_process((uint32_t) NULL);
+  idle_proc->pid = -1;
+  current_proc = idle_proc;
+
   proc_a = create_process((uint32_t) proc_a_entry);
   proc_b = create_process((uint32_t) proc_b_entry);
-  proc_a_entry();
-
-  PANIC("[SYSTEM] DONE\n");
+  
+  yield();
+  PANIC("[SYSTEM] EXECUTING IDLE\n");
 
 	for(;;){
 		__asm__ __volatile__("wfi"); //wfi - wait for interrupt, conserve power by putting the CPU core into a low power state
