@@ -76,7 +76,7 @@ struct process {
 };
 
 //virtual paging
-#define SATP_SV32 (1u << 32)
+#define SATP_SV32 (1u << 31)
 #define PAGE_V (1 << 0) //valid, entry is enabled
 #define PAGE_R (1 << 1) //readable
 #define PAGE_W (1 << 2) //writable

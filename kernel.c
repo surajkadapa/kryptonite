@@ -27,7 +27,35 @@ struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4, lo
 void putchar(char ch){
 	sbi_call(ch, 0, 0, 0, 0, 0, 0, 1);
 }
+extern char __free_ram[], __free_ram_end[];
 
+paddr_t alloc_pages(uint32_t n){
+	static paddr_t next_paddr = (paddr_t) __free_ram;  //value of next_paddr is retained across functions, behaving like a global variable
+	paddr_t paddr = next_paddr;
+	next_paddr += n * PAGE_SIZE;
+
+	if(next_paddr > (paddr_t) __free_ram_end)
+		PANIC("OUT OF MEMORY");
+	memset((void *) paddr, 0, n*PAGE_SIZE);
+	return paddr;
+}
+void map_page(uint32_t *table1, uint32_t vaddr, paddr_t paddr, uint32_t flags){
+  if(!is_aligned(vaddr, PAGE_SIZE))
+    PANIC("[SYSTEM] unaligned vaddr %x", vaddr);
+  if(!is_aligned(paddr, PAGE_SIZE))
+    PANIC("[SYSTEM] unaligned paddr %x", paddr);
+
+  uint32_t vpn1 = (vaddr >> 22) & 0x3ff;
+  if ((table1[vpn1] & PAGE_V) == 0){
+    //creating the 2nd lvl page table that doesnt exist
+    uint32_t pt_addr = alloc_pages(1);
+    table1[vpn1] = ((pt_addr / PAGE_SIZE) << 10) | PAGE_V;
+  } 
+
+  uint32_t vpn0 = (vaddr >> 12) & 0x3ff;
+  uint32_t *table0 = (uint32_t *) ((table1[vpn1] >> 10) * PAGE_SIZE);
+  table0[vpn0] = ((paddr / PAGE_SIZE) << 10) | flags | PAGE_V;
+}
 __attribute__((naked))
 __attribute__((aligned(4)))
 void kernel_entry(void){
@@ -112,20 +140,6 @@ void kernel_entry(void){
   );
 }
 
-
-
-extern char __free_ram[], __free_ram_end[];
-
-paddr_t alloc_pages(uint32_t n){
-	static paddr_t next_paddr = (paddr_t) __free_ram;  //value of next_paddr is retained across functions, behaving like a global variable
-	paddr_t paddr = next_paddr;
-	next_paddr += n * PAGE_SIZE;
-
-	if(next_paddr > (paddr_t) __free_ram_end)
-		PANIC("OUT OF MEMORY");
-	memset((void *) paddr, 0, n*PAGE_SIZE);
-	return paddr;
-}
 
 
 void handle_trap(struct trap_frame *f){
@@ -252,9 +266,20 @@ void yield(void){
     : [sscratch] "r" ((uint32_t) &next->stack[sizeof(next->stack)])
   );
 
+  
   //context switching
   struct process *prev = current_proc;
   current_proc = next;
+  //switch the process's page table
+  __asm__ __volatile__(
+      "sfence.vma\n"
+      "csrw satp, %[satp]\n"
+      "sfence.vma\n"
+      "csrw sscratch, %[sscratch]\n"
+      :
+      : [satp] "r" (SATP_SV32 | ((uint32_t) next->page_table / PAGE_SIZE)),
+        [sscratch] "r" ((uint32_t) &next->stack[sizeof(next->stack)])
+  );
   context_switch(&prev->sp, &next->sp);
 }
 
@@ -279,23 +304,7 @@ void proc_b_entry(void){
   }
 }
 
-void map_page(uint32_t *table1, uint32_t vaddr, paddr_t paddr, uint32_t flags){
-  if(!is_aligned(vaddr, PAGE_SIZE))
-    PANIC("[SYSTEM] unaligned vaddr %x", vaddr);
-  if(!is_aligned(paddr, PAGE_SIZE))
-    PANIC("[SYSTEM] unaligned paddr %x", paddr);
 
-  uint32_t vpn1 = (vaddr >> 22) & 0x3ff;
-  if ((table1[vpn1] & PAGE_V) == 0){
-    //creating the 2nd lvl page table that doesnt exist
-    uint32_t pt_addr = alloc_pages(1);
-    table1[vpn1] = ((pt_addr / PAGE_SIZE) << 10) | PAGE_V;
-  } 
-
-  uint32_t vpn0 = (vaddr >> 12) >> 0x3ff;
-  uint32_t *table0 = (uint32_t *) ((table1[vpn1] >> 10) * PAGE_SIZE);
-  table0[vpn0] = ((paddr / PAGE_SIZE) << 10) | flags | PAGE_V;
-}
 
 void kernel_main(void){
 	memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
