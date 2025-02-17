@@ -178,6 +178,8 @@ __attribute__((naked)) void context_switch(uint32_t *prev_sp, uint32_t *next_sp)
 }
 
 struct process procs[PROCS_MAX];
+extern char __kernel_base[];
+
 
 struct process *create_process(uint32_t pc){
   struct process *proc=NULL;
@@ -208,10 +210,16 @@ struct process *create_process(uint32_t pc){
   *--sp = 0;
   *--sp = (uint32_t) pc;
 
+  //map kernel pages
+  uint32_t *page_table = (uint32_t *) alloc_pages(1);
+  for(paddr_t paddr = (paddr_t) __kernel_base; paddr < (paddr_t) __free_ram_end; paddr += PAGE_SIZE)
+    map_page(page_table, paddr, paddr, PAGE_R | PAGE_W | PAGE_X);
+
   //init fields
   proc->pid = i + 1;
   proc->state = PROC_RUNNABLE;
   proc->sp = (uint32_t) sp;
+  proc->page_table = page_table;
   return proc;
 }
 
