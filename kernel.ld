@@ -2,6 +2,7 @@ ENTRY(boot)
 
 SECTIONS {
     . = 0x80200000;  /*set the base address*/
+    __kernel_base = .; 
 
     .text :
     {

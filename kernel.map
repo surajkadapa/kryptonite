@@ -1,7 +1,7 @@
      VMA      LMA     Size Align Out     In      Symbol
        0        0 80200000     1 . = 0x80200000
 80200000 80200000      826     4 .text
-80200000 80200000        e     2         /tmp/kernel-af70f2.o:(.text.boot)
+80200000 80200000        e     2         /tmp/kernel-6135bd.o:(.text.boot)
 80200000 80200000        0     1                 
 80200000 80200000        0     1                 
 80200000 80200000        0     1                 $x.1
@@ -9,7 +9,7 @@
 80200000 80200000        e     1                 boot
 8020000e 8020000e        0     1                 
 8020000e 8020000e        0     1                 
-80200010 80200010      5c0     4         /tmp/kernel-af70f2.o:(.text)
+80200010 80200010      5c0     4         /tmp/kernel-6135bd.o:(.text)
 80200010 80200010        0     1                 
 80200010 80200010        0     1                 
 80200010 80200010        0     1                 $x.0
@@ -382,7 +382,7 @@
 802005ce 802005ce        0     1                 .LBB11_7
 802005d0 802005d0        0     1                 
 802005d0 802005d0        0     1                 
-802005d0 802005d0      256     2         /tmp/common-8282e3.o:(.text)
+802005d0 802005d0      256     2         /tmp/common-2d744b.o:(.text)
 802005d0 802005d0        0     1                 
 802005d0 802005d0        0     1                 
 802005d0 802005d0        0     1                 $x.0
@@ -637,15 +637,15 @@
 80200828 80200828      17d     4 .rodata
 80200828 80200828      17d     1         <internal>:(.rodata.str1.1)
 802009a8 802009a8        4     4 .sdata
-802009a8 802009a8        4     4         /tmp/kernel-af70f2.o:(.sdata)
+802009a8 802009a8        4     4         /tmp/kernel-6135bd.o:(.sdata)
 802009a8 802009a8        4     1                 alloc_pages.next_paddr
 802009a8 802009a8        0     1                 $d.2
 802009ac 802009ac    10070     4 .bss
 802009ac 802009ac        0     1         __bss = .
-802009ac 802009ac    10060     4         /tmp/kernel-af70f2.o:(.bss)
+802009ac 802009ac    10060     4         /tmp/kernel-6135bd.o:(.bss)
 802009ac 802009ac        0     1                 $d.4
 802009ac 802009ac    10060     1                 procs
-80210a0c 80210a0c       10     4         /tmp/kernel-af70f2.o:(.sbss)
+80210a0c 80210a0c       10     4         /tmp/kernel-6135bd.o:(.sbss)
 80210a0c 80210a0c        0     1                 $d.5
 80210a0c 80210a0c        4     1                 idle_proc
 80210a10 80210a10        4     1                 current_proc
@@ -660,7 +660,7 @@
 80231000 80231000  4000000     1 . += 64 * 1024 * 1024
 84231000 84231000        0     1 __free_ram_end = .
        0        0      865     1 .debug_loc
-       0        0      54f     1         /tmp/kernel-af70f2.o:(.debug_loc)
+       0        0      54f     1         /tmp/kernel-6135bd.o:(.debug_loc)
        0        0        0     1                 
        0        0        0     1                 $d.6
       1b       1b        0     1                 
@@ -692,7 +692,7 @@
      4fe      4fe        0     1                 
      519      519        0     1                 
      534      534        0     1                 
-     54f      54f      316     1         /tmp/common-8282e3.o:(.debug_loc)
+     54f      54f      316     1         /tmp/common-2d744b.o:(.debug_loc)
      54f      54f        0     1                 
      54f      54f        0     1                 $d.2
      56d      56d        0     1                 
@@ -713,22 +713,22 @@
      81c      81c        0     1                 
      852      852        0     1                 
        0        0      3a2     1 .debug_abbrev
-       0        0      27a     1         /tmp/kernel-af70f2.o:(.debug_abbrev)
+       0        0      27a     1         /tmp/kernel-6135bd.o:(.debug_abbrev)
        0        0        0     1                 $d.7
-     27a      27a      128     1         /tmp/common-8282e3.o:(.debug_abbrev)
+     27a      27a      128     1         /tmp/common-2d744b.o:(.debug_abbrev)
      27a      27a        0     1                 $d.3
        0        0      e2d     1 .debug_info
-       0        0      ac3     1         /tmp/kernel-af70f2.o:(.debug_info)
+       0        0      ac3     1         /tmp/kernel-6135bd.o:(.debug_info)
        0        0        0     1                 $d.8
-     ac3      ac3      36a     1         /tmp/common-8282e3.o:(.debug_info)
+     ac3      ac3      36a     1         /tmp/common-2d744b.o:(.debug_info)
      ac3      ac3        0     1                 $d.4
        0        0       60     1 .debug_ranges
-       0        0       48     1         /tmp/kernel-af70f2.o:(.debug_ranges)
+       0        0       48     1         /tmp/kernel-6135bd.o:(.debug_ranges)
        0        0        0     1                 
        0        0        0     1                 $d.9
       18       18        0     1                 
       30       30        0     1                 
-      48       48       18     1         /tmp/common-8282e3.o:(.debug_ranges)
+      48       48       18     1         /tmp/common-2d744b.o:(.debug_ranges)
       48       48        0     1                 
       48       48        0     1                 $d.5
        0        0      303     1 .debug_str
@@ -738,17 +738,17 @@
        0        0       2b     1 .riscv.attributes
        0        0       2b     1         <internal>:(.riscv.attributes)
        0        0      1b0     4 .debug_frame
-       0        0      11c     4         /tmp/kernel-af70f2.o:(.debug_frame)
+       0        0      11c     4         /tmp/kernel-6135bd.o:(.debug_frame)
        0        0        0     1                 
        0        0        0     1                 $d.13
-     11c      11c       94     4         /tmp/common-8282e3.o:(.debug_frame)
+     11c      11c       94     4         /tmp/common-2d744b.o:(.debug_frame)
      11c      11c        0     1                 
      11c      11c        0     1                 $d.9
        0        0      a9a     1 .debug_line
-       0        0      67a     1         /tmp/kernel-af70f2.o:(.debug_line)
+       0        0      67a     1         /tmp/kernel-6135bd.o:(.debug_line)
        0        0        0     1                 .Lline_table_start0
        0        0        0     1                 $d.14
-     67a      67a      420     1         /tmp/common-8282e3.o:(.debug_line)
+     67a      67a      420     1         /tmp/common-2d744b.o:(.debug_line)
      67a      67a        0     1                 .Lline_table_start0
      67a      67a        0     1                 $d.10
        0        0     31d0     4 .symtab

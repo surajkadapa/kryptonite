@@ -70,9 +70,19 @@ struct process {
 	int pid; //process id
 	int state; //process state: PROC_UNUSED or PROC_RUNNABLE
 	vaddr_t sp; //stack pointer
+  uint32_t *page_table; //pointer to its first level page table
 	uint8_t stack[8192]; //kernel stack
 	//contains saved CPU regs, return addresses and local vars, can be used for context switching
 };
+
+//virtual paging
+#define SATP_SV32 (1u << 32)
+#define PAGE_V (1 << 0) //valid, entry is enabled
+#define PAGE_R (1 << 1) //readable
+#define PAGE_W (1 << 2) //writable
+#define PAGE_X (1 << 3) //executable
+#define PAGE_U (1 << 4) //accessible in user mode
+
 
 
 
