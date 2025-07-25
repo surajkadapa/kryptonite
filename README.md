@@ -22,14 +22,14 @@
 
 ## File Structure
 
-`kernel.c` - Main kernel logic, scheduler, trap handler, entry points
-`kernel.h` - Core definitions (CSR macros, structs, flags)
-`common.c` - Custom libc functions (printf, memset, memcpy)
-`common.h` - Basic typedefs and helper macros
-`kernel.ld` - Linker script for memory layout and stack setup
-`run.sh` - Compiles and runs the kernel via QEMU
-`debug.sh` - QEMU debug run with monitor and logs
-`monitor.cmd` - Logs PC during execution (QEMU monitor script)
+`kernel.c` - Main kernel logic, scheduler, trap handler, entry points\
+`kernel.h` - Core definitions (CSR macros, structs, flags)\
+`common.c` - Custom libc functions (printf, memset, memcpy)\
+`common.h` - Basic typedefs and helper macros\
+`kernel.ld` - Linker script for memory layout and stack setup\
+`run.sh` - Compiles and runs the kernel via QEMU\
+`debug.sh` - QEMU debug run with monitor and logs\
+`monitor.cmd` - Logs PC during execution (QEMU monitor script)\
 
 ---
 
